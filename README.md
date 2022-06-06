@@ -33,10 +33,17 @@ iptables -A INPUT -p <protocol> --dport <port> -m state --state NEW -j ACCEPT
 ## Running the CIS scripts
 
 Run the script to sync the file into remote server and execute the remediation of CIS benchmark.
+The environment variable is default as **production** if you omit the value of it.
+
+**supported environments**:
+
+- production
+- staging
 
 ```sh
 chmod u+x ./sync.sh
 # e.g. ./sync.sh 192.168.8.8 staging
 # e.g. ./sync.sh 192.168.8.8
-./sync.sh <MACHINE_IP> <ENVIRONMENT:Optional>
+
+./sync.sh <MACHINE_IP> <ENVIRONMENT:production>
 ```
