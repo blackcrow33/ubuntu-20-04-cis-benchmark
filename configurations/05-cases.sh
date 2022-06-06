@@ -1,4 +1,17 @@
 #!/bin/bash
+#
+# Modified Date: Tuesday, June 6th 2022
+# Author: Kuan Cheang
+# Version: 1.0
+#
+# © Copyright 2021, Asian Software Quality Institute Limited (ASQI)
+#
+# This document, which contains confidential material, is private and confidential
+# and is the property and copyright of ASQI. No part of this document may be reproduced,
+# stored in a retrieval system or transmitted in any form or by any means, electronic,
+# mechanical, chemical, photocopy, recording or otherwise without the prior written
+# permission of ASQI. Upon completion of the Archive The Logs In the Syslog Server for SJM Resorts, S.A.,
+# the copyright of this document will be transferred to SJM Resorts, S.A.
 
 say "- 5.1.2~5.1.7 Ensure permissions on crontab are configured (Automated)" "" 1
     chown root:root /etc/cron{tab,.hourly,.daily,.weekly,.monthly,.d}

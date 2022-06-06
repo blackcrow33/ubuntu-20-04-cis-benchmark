@@ -1,4 +1,18 @@
 #!/bin/bash
+#
+# Modified Date: Tuesday, June 6th 2022
+# Author: Kuan Cheang
+# Version: 1.0
+#
+# © Copyright 2021, Asian Software Quality Institute Limited (ASQI)
+#
+# This document, which contains confidential material, is private and confidential
+# and is the property and copyright of ASQI. No part of this document may be reproduced,
+# stored in a retrieval system or transmitted in any form or by any means, electronic,
+# mechanical, chemical, photocopy, recording or otherwise without the prior written
+# permission of ASQI. Upon completion of the Archive The Logs In the Syslog Server for SJM Resorts, S.A.,
+# the copyright of this document will be transferred to SJM Resorts, S.A.
+
 say "- change the default shell using bash instead of zsh" "" 1
     chsh -s /bin/bash root 
     chsh -s /bin/bash sysadmin
@@ -7,7 +21,6 @@ say "- change the default shell using bash instead of zsh" "" 1
         echo -e "\nEDITOR=/usr/bin/vim" | tee -a /root/.bashrc
     test -z "$(grep -E '^EDITOR=.*$' /home/sysadmin/.bashrc)" && \
         echo -e "\nEDITOR=/usr/bin/vim" | tee -a /home/sysadmin/.bashrc
-
 
     sayDone
 
