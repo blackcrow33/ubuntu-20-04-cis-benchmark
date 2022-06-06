@@ -13,7 +13,7 @@
 # permission of ASQI. Upon completion of the Archive The Logs In the Syslog Server for SJM Resorts, S.A.,
 # the copyright of this document will be transferred to SJM Resorts, S.A.
 
-say "- change the default shell using bash instead of zsh" "" 1
+say "- Change the default shell using Bash instead of Zsh" "" 1
     chsh -s /bin/bash root 
     chsh -s /bin/bash sysadmin
     
@@ -36,8 +36,15 @@ say "- Permit root login via SSH." "" 1
     sed -e "s/^#\?\(PermitRootLogin\) .\+$/\1 yes/g" -i /etc/ssh/sshd_config 
     systemctl restart sshd > /dev/null
     sayDone
-say "- Creating a symbolic commands for Tenable to audit the configuration in /usr/bin/"
+say "- Creating a symbolic commands for Tenable to audit the configuration in /usr/bin/" "" 1
     [ ! -f /usr/bin/grep ] && ln -s /bin/grep /usr/bin/grep
     [ ! -f /usr/bin/sed ] && ln -s /bin/sed /usr/bin/sed
+    sayDone
+say "- Ensure DNS resolver is set" "" 1
+    sed -e "s/^#\?\(DNS\)=.*/\1=$REMOTE_DNS_SERVER/g" \
+        -e "s/^#\?\(FallbackDNS\)=.*/\1=$REMOTE_FALLBACK_DNS_SERVER/g" \
+        -e "s/^#\?\(Domains\)=.*/\1=$REMOTE_DNS_DOMAIN/g" \
+        -i /etc/systemd/resolved.conf
+    systemctl restart systemd-resolved
     sayDone
 exit 0

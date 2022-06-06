@@ -14,7 +14,8 @@ elif [ -n "$2" -a \( "$2" != "staging" -a "$2" != "production" \) ]; then
 fi
 
 echo "Copying the required file into the /root path"
-scp -qr cis/ root@$1:/root/cis
+scp -qr cis/ root@$1:/root
 echo "Start run the script with the environment \"$ENV\"..."
-ssh root@$1 bash -c "/root/cis/run.sh $ENV"
-echo ""
+ssh root@$1 bash -c "echo $ENV && /root/cis/run.sh $ENV"
+
+exit 0

@@ -1,4 +1,5 @@
 #!/bin/bash
+ENV=$1
 export RCol='\e[0m'    # Text Reset
 
 # Regular           Bold                Underline           High Intensity      BoldHigh Intens     Background          High Intensity Backgrounds
@@ -62,15 +63,19 @@ heading() {
     sayln "-------$FIL-------" 
 }
 
-
 heading "Running the CIS configurations"
+
+export WORKDIR="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+if [ -f "$WORKDIR/envs/settings.$ENV" ]; then
+    say "** - Loading environment variables..."
+    export $(echo $(cat $WORKDIR/envs/settings.$ENV | sed 's/#.*//g'| xargs) | envsubst)
+    sayDone
+fi
 
 export -f say
 export -f sayln
 export -f sayDone
 export -f sayFailed
-export WORKDIR="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-export REMOTE_SYSLOG_IP="192.168.1.1"
 CNT=0
 ERRS=0
 for config in $(dirname "$0")/configurations/*; do

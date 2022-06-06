@@ -50,11 +50,11 @@ say "- 4.2.1.5 Ensure rsyslog is configured to send logs to a remote log host (A
     tcpset=$(grep -E '^\s*([^#]+\s+)?action\(([^#]+\s+)?\btarget=\"?[^#"]+\"?\b' /etc/rsyslog.conf /etc/rsyslog.d/*.conf)
     oldset=$(grep -E '^[^#]\s*\S+\.\*\s+@' /etc/rsyslog.conf /etc/rsyslog.d/*.conf)
 
-    test -z "$REMOTE_SYSLOG_IP" && sayFailed || (
+    test -z "$REMOTE_SYSLOG_SERVER" && sayFailed || (
         if [ -z "$tcpset" -a -z "$oldset" ]; then
             cat <<EOF | tee /etc/rsyslog.d/99-forward.conf > /dev/null
 if (\$fromhost-ip == "127.0.0.1") then {
-    *.* action(type="omfwd" target="$REMOTE_SYSLOG_IP" port="514" protocol="tcp" 
+    *.* action(type="omfwd" target="$REMOTE_SYSLOG_SERVER" port="514" protocol="tcp" 
                action.resumeRetryCount="100" queue.type="LinkedList" queue.size="1000")
 }
 EOF

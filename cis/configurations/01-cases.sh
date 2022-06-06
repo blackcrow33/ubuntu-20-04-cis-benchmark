@@ -97,12 +97,4 @@ say "- 1.7.4~1.7.6 Ensure permissions on /etc/{motd,issue,issue.net} are configu
      
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
-say "- 2.1.x Ensure rsync, NFS, telnet, RPC service is not installed" "" 1
-
-    apt-get purge rsync nfs-kernel-server telnet rpcbind -y > /dev/null 2>&1 
-    apt-get autoremove -y > /dev/null 2>&1
-
-    if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
-
-
 exit 0
