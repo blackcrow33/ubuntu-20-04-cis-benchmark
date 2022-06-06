@@ -50,7 +50,7 @@ say "- 4.2.1.5 Ensure rsyslog is configured to send logs to a remote log host (A
     tcpset=$(grep -E '^\s*([^#]+\s+)?action\(([^#]+\s+)?\btarget=\"?[^#"]+\"?\b' /etc/rsyslog.conf /etc/rsyslog.d/*.conf)
     oldset=$(grep -E '^[^#]\s*\S+\.\*\s+@' /etc/rsyslog.conf /etc/rsyslog.d/*.conf)
 
-    test -z "$REMOTE_SYSLOG_SERVER" && sayFailed || (
+    if test -n "$REMOTE_SYSLOG_SERVER"; then 
         if [ -z "$tcpset" -a -z "$oldset" ]; then
             cat <<EOF | tee /etc/rsyslog.d/99-forward.conf > /dev/null
 if (\$fromhost-ip == "127.0.0.1") then {
@@ -61,9 +61,9 @@ EOF
             chmod 640 /etc/rsyslog.d/99-forward.conf
             systemctl restart rsyslog > /dev/null
         fi
+    fi
 
-        if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
-    )
+    if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
     
 say "- 4.2.2.1 Ensure journald is configured to send logs to rsyslog" "" 1
 
@@ -84,11 +84,58 @@ say "- 4.2.2.3 Ensure journald is configured to write logfiles to persistent dis
 
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
+say "- 4.3 Ensure logrotate is configured (Manual)" "" 1
+    
+    cat <<EOF | tee /etc/logrotate.d/rsyslog > /dev/null     
+/var/log/syslog
+{
+    rotate 7
+    daily
+    missingok
+    notifempty
+    delaycompress
+    compress
+    postrotate
+        /usr/lib/rsyslog/rsyslog-rotate
+    endscript
+}
+
+/var/log/mail.info
+/var/log/mail.warn 
+/var/log/mail.err
+/var/log/mail.log
+/var/log/daemon.log
+/var/log/kern.log
+/var/log/auth.log
+/var/log/user.log
+/var/log/lpr.log
+/var/log/cron.log
+/var/log/debug
+/var/log/messages
+/var/log/warn
+/var/log/localmessages
+{
+    rotate 4
+    weekly
+    missingok
+    notifempty
+    compress
+    delaycompress
+    sharedscripts
+    postrotate
+        /usr/lib/rsyslog/rsyslog-rotate
+    endscript
+}
+EOF
+    
+
 say "- 4.4 Ensure logrotate assigns appropriate permissions (Automated)" "" 1
 
     sed -e 's/^\(\s*create\).*$/\1 0640 root utmp/g' -i /etc/logrotate.conf > /dev/null
     find /etc/logrotate.d -type f -exec sed -e 's/^\(\s*create\).*$/\1 0640 root utmp/g' -i {} +;
     sed -e 's/^\(.*\(wtmp\|btmp\|lastlog\)\).*/\1 0640 root utmp -/g' -i /usr/lib/tmpfiles.d/var.conf
+
+    systemctl restart logrotate.service
 
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
