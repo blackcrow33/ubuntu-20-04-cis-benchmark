@@ -84,6 +84,12 @@ say "- 4.2.2.3 Ensure journald is configured to write logfiles to persistent dis
 
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
+say "- 4.2.3 Ensure permissions on all logfiles are configured (Automated)" "" 1
+    
+    find /var/log -type f -exec chmod g-wx,o-rwx "{}" + -o -type d -exec chmod g-w,o-rwx "{}" +
+
+    if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
+
 say "- 4.3 Ensure logrotate is configured (Manual)" "" 1
     
     cat <<EOF | tee /etc/logrotate.d/rsyslog > /dev/null     

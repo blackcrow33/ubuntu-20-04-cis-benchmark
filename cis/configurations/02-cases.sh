@@ -21,12 +21,6 @@ say "- 2.1.7 Ensure NFS service is not installed" "" 1
 
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
-say "- 2.1.16 Ensure rsync, NFS, telnet, RPC service is not installed" "" 1
-
-    apt-get purge rsync -y > /dev/null 2>&1 
-
-    if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
-
 say "- 2.1.1.1~2.1.1.2 Ensure time synchronization is in use (Automated)" "" 1
     
     apt-get purge -y ntp chrony > /dev/null
@@ -36,12 +30,18 @@ say "- 2.1.1.1~2.1.1.2 Ensure time synchronization is in use (Automated)" "" 1
 
     sed  -e "s/^#\?\(NTP\)=.*/\1=$REMOTE_NTP_SERVER/g" \
         -e "s/^#\?\(FallbackNTP\)=.*/\1=${REMOTE_FALLBACK_NTP_SERVER:-ntp.ubuntu.com}/g" \
-        -e "s/^#\?\(RootDistanceMaxSec\)=.*/\1=1/g" \
+        -e "s/^#\?\(RootDistanceMaxSec\)=.*/\1=5/g" \
         -i /etc/systemd/timesyncd.conf > /dev/null
    
     systemctl restart systemd-timesyncd 1> /dev/null
     timedatectl set-ntp true 1> /dev/null
      
+    if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
+
+say "- 2.1.16 Ensure rsync service is not installed" "" 1
+
+    apt-get purge rsync -y > /dev/null 2>&1 
+
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
 say "- 2.2.4 Ensure telnet service is not installed" "" 1

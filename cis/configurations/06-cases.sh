@@ -29,6 +29,14 @@ say "- 6.1.6 Ensure permissions on /etc/shadow are configured (Automated)" "" 1
 
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
+say "- 6.1.10 Ensure no world writable files exist" "" 1
+    
+    if [ -d /usr/share/logstash ]; then
+        chmod -R o-w /usr/share/logstash/vendor/bundle/jruby/2.5.0/gems/*
+    fi
+    
+    if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
+
 say "- 6.2.4 Ensure all users' home directories exist (Automated)" "" 1
 
     awk -F: '($1!~/(halt|sync|shutdown|nfsnobody)/ && $7!~/^(\/usr)?\/sbin\/nologin(\/)?$/ && $7!~/(\/usr)?\/bin\/false(\/)?$/) { print $1 " " $6 }' \
@@ -40,6 +48,27 @@ say "- 6.2.4 Ensure all users' home directories exist (Automated)" "" 1
                 chown $user $dir
             fi
         done
+
+    if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
+
+say "- 6.2.5 Ensure users own their home directories (Automated)" "" 1
+    
+    awk -F: '($1!~/(halt|sync|shutdown)/ && $7!~/^(\/usr)?\/sbin\/nologin(\/)?$/ && $7!~/(\/usr)?\/bin\/false(\/)?$/) { print $1 " " $6 }' \
+       /etc/passwd | while read -r user dir; do
+            if [ ! -d "$dir" ]; then
+                echo "User: \"$user\" home directory: \"$dir\" does not exist, creating home directory"
+                mkdir "$dir"
+                chmod g-w,o-rwx "$dir"
+                chown "$user" "$dir"
+            else
+                owner=$(stat -L -c "%U" "$dir")
+                if [ "$owner" != "$user" ]; then
+                    chmod g-w,o-rwx "$dir"
+                    chown "$user" "$dir"
+                fi
+            fi 
+        done
+    
 
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 

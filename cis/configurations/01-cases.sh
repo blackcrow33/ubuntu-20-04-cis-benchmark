@@ -36,7 +36,7 @@ say "- 1.4.1 Ensure permissions on bootloader config are not overridden (Automat
 say "- 1.4.2 Ensure bootloader password is set (Automated)" "" 1
     
     if [ $(grep "^set superusers" /boot/grub/grub.cfg | wc -l) -eq 0 -a  $(grep "^password" /boot/grub/grub.cfg | wc -l) -eq 0 ]; then
-        echo -e "cat<<EOF\nset superusers=\"sysadmin\"\npassword_pbkdf2 sysadmin grub.pbkdf2.sha512.10000.8E6652B2F2BC5115CDD7B32CCD2CEED43D4A18EDE7B60932AF01FEAA994E52D46E1C1F4611B8D6A8421321D9C6CFCAEEE5A120937D64975898D31AAA7C252A4E.7CE038C68608D13B920644C146B530CD6D887D3598BF881E01B4D7FBDE94C6BDF6519DDB5F7140B2448E2199CCDE9895CE6B99471EBCC56365A5A7ACA2CBE060\nEOF" | tee /etc/grub.d/42_custom >> /dev/null
+        echo -e "cat<<EOF\nset superusers=\"sysadmin\"\npassword_pbkdf2 sysadmin $BOOT_PASSWORD\nEOF" | tee /etc/grub.d/42_custom >> /dev/null
         chmod 755 /etc/grub.d/42_custom
         sed -e 's/^CLASS=".*"$/CLASS="--class gnu-linux --class gnu --class os --unrestricted"/' -i /etc/grub.d/10_linux 
         update-grub > /dev/null 2>&1

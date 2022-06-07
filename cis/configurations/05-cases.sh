@@ -63,7 +63,9 @@ say "- 5.3.x Ensure SSH settings is appropriate (Automated)" "" 1
     sed -e 's/^\s*#\(LogLevel\|IgnoreRhosts\|HostbasedAuthentication\|MaxSessions\|MaxStartups.*\)/\1/g' -i /etc/ssh/sshd_config  
     sed -e 's/^\s*#\(PermitEmptyPasswords\|PermitUserEnvironment.*\)/\1/g' -i /etc/ssh/sshd_config  
     sed -e 's/^\s*#\(MaxAuthTries\).*/\1 4/g' -i /etc/ssh/sshd_config  
-    sed -e 's/^\s*#\(LoginGraceTime\).*/\1 1m/g' -i /etc/ssh/sshd_config  
+    sed -e 's/^\s*#\(MaxStartups\).*/\1 10:30:60/g' -i /etc/ssh/sshd_config  
+    sed -e 's/^\s*#\(MaxSessions\).*/\1 3/g' -i /etc/ssh/sshd_config  
+    sed -e 's/^\s*#\(LoginGraceTime\).*/\1 60/g' -i /etc/ssh/sshd_config  
     sed -e 's/^\s*#\(ClientAliveInterval\).*/\1 300/g' -i /etc/ssh/sshd_config  
     sed -e 's/^\s*#\(ClientAliveCountMax\).*/\1 3/g' -i /etc/ssh/sshd_config  
     sed -e 's/^\s*#\(Banner\).*/\1 \/etc\/issue\.net/g' -i /etc/ssh/sshd_config  

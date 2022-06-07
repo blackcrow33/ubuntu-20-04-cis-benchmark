@@ -18,28 +18,55 @@ say "- Change the default shell using Bash instead of Zsh" "" 1
     chsh -s /bin/bash sysadmin
     
     test -z "$(grep -E '^EDITOR=.*$' /root/.bashrc)" && \
-        echo -e "\nEDITOR=/usr/bin/vim" | tee -a /root/.bashrc
+        echo -e "\nEDITOR=/usr/bin/vim" | tee -a /root/.bashrc > /dev/null
     test -z "$(grep -E '^EDITOR=.*$' /home/sysadmin/.bashrc)" && \
-        echo -e "\nEDITOR=/usr/bin/vim" | tee -a /home/sysadmin/.bashrc
+        echo -e "\nEDITOR=/usr/bin/vim" | tee -a /home/sysadmin/.bashrc /dev/null
 
     sayDone
 
 say "- Remove unnecessary packages." "" 1
-    apt-get purge clamav-freshclam clamav-daemon clamav > /dev/null
-    apt-get autoremove > /dev/null
+    FRONTEND=noninteractive apt-get -q purge -y \
+        clamav-freshclam \
+        clamav-daemon \
+        clamav \
+        sendmail \
+        snapd > /dev/null
+    apt-get autoremove -y > /dev/null
+    rm -rf /snap
+    rm -rf /var/cache/snapd/
     rm -rf /etc/logrotate.d/clamav*
     rm -rf /etc/clamav*
     rm -rf /var/log/clamav*
+    rm -rf /root/snap
+    rm -rf /var/lib/sendmail
+
+    if [ "$(cat /etc/environment | grep 'snap/bin')" ]; then
+        sed -e 's/:\?\/snap\/bin//g' -i /etc/environment
+    fi
+
     systemctl restart logrotate
     sayDone
-say "- Permit root login via SSH." "" 1
-    sed -e "s/^#\?\(PermitRootLogin\) .\+$/\1 yes/g" -i /etc/ssh/sshd_config 
-    systemctl restart sshd > /dev/null
+
+say "- Remove user's unnecessary files"
+    awk -F: '($1!~/(halt|sync|shutdown)/ && $7!~/^(\/usr)?\/sbin\/nologin(\/)?$/ && $7!~/(\/usr)?\/bin\/false(\/)?$/) { print $1 " " $6 }' /etc/passwd | \
+        while read -r user dir; do 
+            if [ -d $dir/.fzf ]; then
+                rm -rf $dir/.fzf
+            fi
+        done
+
     sayDone
+
+#say "- Permit root login via SSH." "" 1
+#    sed -e "s/^#\?\(PermitRootLogin\) .\+$/\1 yes/g" -i /etc/ssh/sshd_config 
+#    systemctl restart sshd > /dev/null
+#    sayDone
+
 say "- Creating a symbolic commands for Tenable to audit the configuration in /usr/bin/" "" 1
     [ ! -f /usr/bin/grep ] && ln -s /bin/grep /usr/bin/grep
     [ ! -f /usr/bin/sed ] && ln -s /bin/sed /usr/bin/sed
     sayDone
+
 say "- Ensure DNS resolver is set" "" 1
     sed -e "s/^#\?\(DNS\)=.*/\1=$REMOTE_DNS_SERVER/g" \
         -e "s/^#\?\(FallbackDNS\)=.*/\1=$REMOTE_FALLBACK_DNS_SERVER/g" \
