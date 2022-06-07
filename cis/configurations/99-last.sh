@@ -69,8 +69,8 @@ EOF
         chown root:root /etc/systemd/system/aidecheck.*        
         chmod 0644 /etc/systemd/system/aidecheck.*
         systemctl daemon-reload > /dev/null
-        systemctl enable aidecheck.service > /dev/null
-        systemctl --now enable aidecheck.timer > /dev/null
+        systemctl enable aidecheck.service > /dev/null 2>&1
+        systemctl --now enable aidecheck.timer > /dev/null 2>&1
     fi
 
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
