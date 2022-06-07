@@ -57,5 +57,4 @@ say "- 2.2.6 Ensure RPC service is not installed" "" 1
 
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
-
 exit 0

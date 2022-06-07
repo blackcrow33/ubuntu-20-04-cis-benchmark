@@ -60,15 +60,15 @@ say "- 5.3.4 Ensure SSH access is limited (Automated)" "" 1
 
 say "- 5.3.x Ensure SSH settings is appropriate (Automated)" "" 1
     
-    sed -e 's/^\s*#\(LogLevel\|IgnoreRhosts\|HostbasedAuthentication\|MaxSessions\|MaxStartups.*\)/\1/g' -i /etc/ssh/sshd_config  
-    sed -e 's/^\s*#\(PermitEmptyPasswords\|PermitUserEnvironment.*\)/\1/g' -i /etc/ssh/sshd_config  
-    sed -e 's/^\s*#\(MaxAuthTries\).*/\1 4/g' -i /etc/ssh/sshd_config  
-    sed -e 's/^\s*#\(MaxStartups\).*/\1 10:30:60/g' -i /etc/ssh/sshd_config  
-    sed -e 's/^\s*#\(MaxSessions\).*/\1 3/g' -i /etc/ssh/sshd_config  
-    sed -e 's/^\s*#\(LoginGraceTime\).*/\1 60/g' -i /etc/ssh/sshd_config  
-    sed -e 's/^\s*#\(ClientAliveInterval\).*/\1 300/g' -i /etc/ssh/sshd_config  
-    sed -e 's/^\s*#\(ClientAliveCountMax\).*/\1 3/g' -i /etc/ssh/sshd_config  
-    sed -e 's/^\s*#\(Banner\).*/\1 \/etc\/issue\.net/g' -i /etc/ssh/sshd_config  
+    sed -e 's/^\s*#\?\(LogLevel\|IgnoreRhosts\|HostbasedAuthentication\|MaxSessions\|MaxStartups.*\)/\1/g' -i /etc/ssh/sshd_config  
+    sed -e 's/^\s*#\?\(PermitEmptyPasswords\|PermitUserEnvironment.*\)/\1/g' -i /etc/ssh/sshd_config  
+    sed -e 's/^\s*#\?\(MaxAuthTries\).*/\1 4/g' -i /etc/ssh/sshd_config  
+    sed -e 's/^\s*#\?\(MaxStartups\).*/\1 10:30:60/g' -i /etc/ssh/sshd_config  
+    sed -e 's/^\s*#\?\(MaxSessions\).*/\1 3/g' -i /etc/ssh/sshd_config  
+    sed -e 's/^\s*#\?\(LoginGraceTime\).*/\1 60/g' -i /etc/ssh/sshd_config  
+    sed -e 's/^\s*#\?\(ClientAliveInterval\).*/\1 300/g' -i /etc/ssh/sshd_config  
+    sed -e 's/^\s*#\?\(ClientAliveCountMax\).*/\1 3/g' -i /etc/ssh/sshd_config  
+    sed -e 's/^\s*#\?\(Banner\).*/\1 \/etc\/issue\.net/g' -i /etc/ssh/sshd_config  
     
     if [ -z "$(grep -E "^\s*Ciphers\s.*$" /etc/ssh/sshd_config)" ]; then
         echo "Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr"\
@@ -163,7 +163,7 @@ say "- 5.5.4 Ensure default user umask is 027 or more restrictive (Automated)" "
     awk -F: '($1!~/(halt|sync|shutdown)/ && $7!~/^(\/usr)?\/sbin\/nologin(\/)?$/ && $7!~/(\/usr)?\/bin\/false(\/)?$/) { print $1 " " $6 }' \
         /etc/passwd | while read -r user dir; do
             if [ -z "$(grep -e '^umask .*$' $dir/.bashrc)" ]; then
-                tee -a $dir/.bashrc > /dev/null
+               echo "umask 027" | tee -a $dir/.bashrc > /dev/null
             fi
         done
 

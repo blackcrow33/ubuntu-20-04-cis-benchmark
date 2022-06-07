@@ -65,6 +65,7 @@ say "- 1.5.4 Ensure core dumps are restricted (Automated)" "" 1
 say "- 1.7.1 Ensure message of the day is configured properly (Automated)" "" 1
     
     cat <<EOF | tee /etc/motd > /dev/null
+
 This OS is configured and specialized for the ELK related services.
 You must have explicit, authorized permission to access or configure this device. 
 Unauthorized attempts and actions to access or use this system may result in civil and/or criminal penalties. 
