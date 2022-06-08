@@ -66,10 +66,11 @@ say "- 1.7.1 Ensure message of the day is configured properly (Automated)" "" 1
     
     cat <<EOF | tee /etc/motd > /dev/null
 
+All activities performed on this system will be monitored.
+
 This OS is configured and specialized for the ELK related services.
 You must have explicit, authorized permission to access or configure this device. 
 Unauthorized attempts and actions to access or use this system may result in civil and/or criminal penalties. 
-All activities performed on this device are logged and monitored.
 
 EOF
     
@@ -77,7 +78,7 @@ EOF
 
 say "- 1.7.2~1.7.3 Ensure local/remote login warning banner is configured properly" "" 1
 
-    msg="Authorized uses only. All activity may be monitored and reported."
+    msg="Authorized uses only. All activity performed on this system will be monitored."
     echo $msg > /etc/issue
     echo $msg > /etc/issue.net
 
