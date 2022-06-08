@@ -26,7 +26,7 @@ say "- 2.1.1.1~2.1.1.2 Ensure time synchronization is in use (Automated)" "" 1
     apt-get purge -y ntp chrony > /dev/null
 
     tar -zxf $WORKDIR/packages/systemd-timesyncd-all.tar.gz -C /var/cache/apt/archives/
-    apt-get install -yq systemd-timesyncd > /dev/null 2>&1
+    apt-get -q install -y systemd-timesyncd > /dev/null 2>&1
 
     sed  -e "s/^#\?\(NTP\)=.*/\1=$REMOTE_NTP_SERVER/g" \
         -e "s/^#\?\(FallbackNTP\)=.*/\1=${REMOTE_FALLBACK_NTP_SERVER:-ntp.ubuntu.com}/g" \

@@ -70,12 +70,12 @@ say "- 5.3.x Ensure SSH settings is appropriate (Automated)" "" 1
     sed -e 's/^\s*#\?\(ClientAliveCountMax\).*/\1 3/g' -i /etc/ssh/sshd_config  
     sed -e 's/^\s*#\?\(Banner\).*/\1 \/etc\/issue\.net/g' -i /etc/ssh/sshd_config  
     
-    if [ -z "$(grep -E "^\s*Ciphers\s.*$" /etc/ssh/sshd_config)" ]; then
+    if [ -z "$(grep -E "^\s*[Cc]iphers\s.*$" /etc/ssh/sshd_config)" ]; then
         echo "Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr"\
             | tee -a /etc/ssh/sshd_config > /dev/null
     fi
 
-    if [ -z "$(grep -E "^\s*Macs\s.*$" /etc/ssh/sshd_config)" ]; then
+    if [ -z "$(grep -E "^\s*[Mm][Aa][Cc]s\s.*$" /etc/ssh/sshd_config)" ]; then
         echo "MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512,hmac-sha2-256" \
             | tee -a /etc/ssh/sshd_config > /dev/null
     fi
