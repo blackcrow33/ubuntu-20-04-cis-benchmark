@@ -20,7 +20,7 @@ say "- Change the default shell using Bash instead of Zsh" "" 1
     test -z "$(grep -E '^EDITOR=.*$' /root/.bashrc)" && \
         echo -e "\nEDITOR=/usr/bin/vim" | tee -a /root/.bashrc > /dev/null
     test -z "$(grep -E '^EDITOR=.*$' /home/sysadmin/.bashrc)" && \
-        echo -e "\nEDITOR=/usr/bin/vim" | tee -a /home/sysadmin/.bashrc /dev/null
+        echo -e "\nEDITOR=/usr/bin/vim" | tee -a /home/sysadmin/.bashrc > /dev/null
 
     sayDone
 
