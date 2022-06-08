@@ -28,6 +28,16 @@ REMOTE_FALLBACK_NTP_SERVER=""
 BOOT_PASSWORD=""
 ```
 
+## Change the super admin password
+
+After CIS applied, the super user account except the root will be set password expired. 
+You have to change it immediately to prevent blocking from accessing the system via the super user.
+
+```sh
+# the length of password should be > 14 characters.
+passwd <your_super_account>
+```
+
 ## Adding firewall rule
 
 ```sh

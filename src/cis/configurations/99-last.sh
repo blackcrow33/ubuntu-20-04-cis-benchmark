@@ -84,4 +84,8 @@ say "- 6.1.11~6.1.12 Ensure no unowned/ungrouped files or directories exist (Aut
     
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
+say "- Cleaning up the scripts and packages for the CIS configuration." "" 1
+    rm -rf $WORKDIR > /dev/null
+
+    if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 exit 0

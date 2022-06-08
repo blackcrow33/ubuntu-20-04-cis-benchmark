@@ -24,6 +24,18 @@ say "- Change the default shell using Bash instead of Zsh" "" 1
 
     sayDone
 
+say "- Create a bash_aliases file to show the current hostname"
+
+    awk -F: '($1!~/(halt|sync|shutdown)/ && $7!~/^(\/usr)?\/sbin\/nologin(\/)?$/ && $7!~/(\/usr)?\/bin\/false(\/)?$/) { print $1 " " $6 }' /etc/passwd | \
+        while read -r user dir; do 
+            cat <<EOF | tee $dir/.bash_aliases > /dev/null
+/usr/bin/figlet \$(hostname) | /usr/games/lolcat
+EOF
+            chmod 644 $dir/.bash_aliases
+        done
+
+    sayDone
+
 say "- Remove unnecessary packages." "" 1
     FRONTEND=noninteractive apt-get -q purge -y \
         clamav-freshclam \
