@@ -32,10 +32,11 @@ say "- 6.1.6 Ensure permissions on /etc/shadow are configured (Automated)" "" 1
 
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
+
 say "- 6.1.10 Ensure no world writable files exist" "" 1
     
-    if [ -d /usr/share/logstash ]; then
-        chmod -R o-w /usr/share/logstash/vendor/bundle/jruby/2.5.0/gems/*
+    if [ -d /usr/share/logstash/vendor/bundle/jruby ]; then
+        find /usr/share/logstash/vendor/bundle/jruby -type f -exec chmod g-w,o-rwx {} +;
     fi
     
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi

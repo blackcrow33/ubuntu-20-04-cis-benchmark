@@ -64,5 +64,5 @@ fi
 echo "Copying the required file into the /root path"
 scp -qr cis/ root@$SRV_IP:/root
 echo "Start run the script with the environment \"$ENVIR\"..."
-ssh root@$SRV_IP bash -c "/root/cis/run.sh $ENVVIR $RECV_SYSLOG $FORWARD $UPGRADE"
+ssh root@$SRV_IP bash -c "echo $ENVIR && echo $RECV_SYSLOG && echo $FORWARD && echo $UPGRADE && /root/cis/run.sh $ENVIR $RECV_SYSLOG $FORWARD $UPGRADE"
 exit 0

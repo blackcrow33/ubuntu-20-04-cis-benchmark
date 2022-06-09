@@ -24,13 +24,23 @@ say "- Change the default shell using Bash instead of Zsh" "" 1
 
     sayDone
 
-say "- Create a bash_aliases file to show the current hostname"
+say "- Fixing the rsyslog upgraded breaking changes" "" 1
+
+    sed -e 's/^$PrivDropTo\(User\|Group\).*/#\0/g' -i /etc/rsyslog.conf
+    
+    sayDone
+
+say "- Create a bash_aliases file to show the current hostname" "" 1
 
     awk -F: '($1!~/(halt|sync|shutdown)/ && $7!~/^(\/usr)?\/sbin\/nologin(\/)?$/ && $7!~/(\/usr)?\/bin\/false(\/)?$/) { print $1 " " $6 }' /etc/passwd | \
         while read -r user dir; do 
-            cat <<EOF | tee $dir/.bash_aliases > /dev/null
+            if [ -f /usr/bin/figlet -a -f /usr/games/lolcat ]; then
+                cat <<EOF | tee $dir/.bash_aliases > /dev/null
 /usr/bin/figlet \$(hostname) | /usr/games/lolcat
 EOF
+            else 
+                echo "" | tee $dir/.bash_aliases > /dev/null
+            fi
             chmod 644 $dir/.bash_aliases
         done
 
@@ -44,17 +54,20 @@ say "- Remove unnecessary packages." "" 1
         sendmail \
         snapd > /dev/null
     apt-get autoremove -y > /dev/null
-    rm -rf /snap
-    rm -rf /var/cache/snapd/
-    rm -rf /etc/logrotate.d/clamav*
-    rm -rf /etc/clamav*
-    rm -rf /var/log/clamav*
-    rm -rf /root/snap
-    rm -rf /var/lib/sendmail
+    rm -rf /snap > /dev/null
+    rm -rf /var/cache/snapd/ > /dev/null
+    rm -rf /etc/logrotate.d/clamav* > /dev/null
+    rm -rf /etc/clamav* > /dev/null
+    rm -rf /var/log/clamav* > /dev/null
+    rm -rf /root/snap > /dev/null
+    rm -rf /var/lib/sendmail > /dev/null
+    rm -rf /etc/cron.d/sendmail > /dev/null
 
     if [ "$(cat /etc/environment | grep 'snap/bin')" ]; then
         sed -e 's/:\?\/snap\/bin//g' -i /etc/environment
     fi
+    
+    sed -e 's/:\?\/snap\/bin//g' -i /etc/sudoers
 
     systemctl restart logrotate
     sayDone

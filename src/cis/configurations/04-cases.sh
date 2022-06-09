@@ -111,7 +111,6 @@ EOF
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
 say "- 4.2.1.6 Ensure remote rsyslog messages are only accepted on designated log hosts (only log server enabled) " "" 1
-    echo "env variable -> $RECV_SYSLOG " 
     if [ -n "$RECV_SYSLOG" ]; then
         # These settings will enable the resyslog server to receive tcp syslog message by 514 port
         test -z "$(grep '^\s*\$ModLoad imtcp' /etc/rsyslog.conf)" && \
