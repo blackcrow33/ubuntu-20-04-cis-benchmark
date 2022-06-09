@@ -222,6 +222,10 @@ say "- 3.5.3.1.x Ensure iptables packages are installed (Automated)" "" 1
 
 say "- 3.5.3.2 Ensure iptables packages are installed (Automated)" "" 1
     
+    # backup the iptables rules before doing the following steps
+    [ -f /etc/iptables/rules.v4 ] && mv /etc/iptables/rules.v4{,.old}
+    [ -f /etc/iptables/rules.v6 ] && mv /etc/iptables/rules.v6{,.old}
+    
     for i in `iptables -L INPUT --line-numbers |grep '[0-9].*ufw' | cut -f 1 -d ' ' | sort -r `; do iptables -D INPUT $i ; done
     for i in `iptables -L FORWARD --line-numbers |grep '[0-9].*ufw' | cut -f 1 -d ' ' | sort -r `; do iptables -D FORWARD $i ; done
     for i in `iptables -L OUTPUT --line-numbers |grep '[0-9].*ufw' | cut -f 1 -d ' ' | sort -r `; do iptables -D OUTPUT $i ; done
