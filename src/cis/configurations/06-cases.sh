@@ -27,6 +27,9 @@ say "- 6.1.6 Ensure permissions on /etc/shadow are configured (Automated)" "" 1
     chown root:root /etc/shadow
     chmod u-x,g-wx,o-rwx /etc/shadow
 
+    chown root:root /etc/shadow-
+    chmod u-x,g-wx,o-rwx /etc/shadow-
+
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
 say "- 6.1.10 Ensure no world writable files exist" "" 1

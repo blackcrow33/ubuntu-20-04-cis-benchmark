@@ -1,5 +1,9 @@
 #!/bin/bash
 ENV=$1
+ENABLE_SYSLOG="$2"
+FORWARD="$3"
+UPGRADE="$4"
+
 export RCol='\e[0m'    # Text Reset
 
 # Regular           Bold                Underline           High Intensity      BoldHigh Intens     Background          High Intensity Backgrounds

@@ -172,13 +172,13 @@ say "- 5.5.4 Ensure default user umask is 027 or more restrictive (Automated)" "
 
 say "- 5.5.5 Ensure default user shell timeout is 900 seconds or less (Automated)" "" 1
     
-#    if test -z "$(cat /etc/bash.bashrc | grep -E "^TMOUT.*")"; then
-#        cat <<EOF | tee -a /etc/bash.bashrc > /dev/null
-#TMOUT=900
-#readonly TMOUT
-#export TMOUT
-#EOF
-#    fi
+    if test -z "$(cat /etc/bash.bashrc | grep -E "^TMOUT.*")"; then
+        cat <<EOF | tee -a /etc/bash.bashrc > /dev/null
+TMOUT=900
+readonly TMOUT
+export TMOUT
+EOF
+    fi
 
     cat <<EOF | tee /etc/profile.d/timeout.sh > /dev/null
 TMOUT=900
