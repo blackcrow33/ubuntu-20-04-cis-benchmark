@@ -14,7 +14,7 @@
 # the copyright of this document will be transferred to SJM Resorts, S.A.
 
 say "- Replacing the apt source list" "" 1
-    cat <<EOF | sudo tee -a /etc/apt/sources.list > /dev/null
+    cat <<EOF | sudo tee /etc/apt/sources.list > /dev/null
 # See http://help.ubuntu.com/community/UpgradeNotes for how to upgrade to
 # newer versions of the distribution.
 deb http://mo.archive.ubuntu.com/ubuntu focal main restricted
@@ -59,7 +59,6 @@ EOF
     rm -rf /etc/apt/sources.list.d/* > /dev/null
 
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
-
 
 say "- 1.3.1 Ensure aide are installed" "" 1
     tar -zxf "$WORKDIR/packages/aide-all.tar.gz" -C /var/cache/apt/archives/

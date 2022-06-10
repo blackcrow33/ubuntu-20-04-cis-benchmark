@@ -31,12 +31,6 @@ while true; do
     esac
 done
 
-echo $SRV_IP
-echo $ENVIR
-echo $UPGRADE
-echo $FORWARD
-echo $RECV_SYSLOG
-
 if test -z "$SRV_IP"; then
     printf '%s\n' "Missing target server ip." >&2
     helpFunction

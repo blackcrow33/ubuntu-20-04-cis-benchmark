@@ -1,5 +1,5 @@
 #!/bin/bash
-ENVIR=$1
+ENVIR="$1"
 ENABLE_SYSLOG="$2"
 FORWARD="$3"
 UPGRADE="$4"
@@ -71,7 +71,7 @@ heading "Running the CIS configurations"
 
 export WORKDIR="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 if [ -f "$WORKDIR/envs/settings.$ENVIR" ]; then
-    say "** - Loading environment variables..."
+    say "** - Loading \"$ENVIR\" environment variables..."
     export $(echo $(cat $WORKDIR/envs/settings.$ENVIR | sed 's/#.*//g'| xargs) | envsubst)
     sayDone
 fi
