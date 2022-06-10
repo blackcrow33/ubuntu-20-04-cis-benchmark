@@ -26,7 +26,7 @@ while getopts "s:r:e:f:u:" opt; do
         r ) RECV_SYSLOG="$OPTARG" ;;
         e ) ENVIR="$OPTARG" ;;
         f ) FORWARD="$OPTARG" ;;
-        f ) UPGRADE="$OPTARG" ;;
+        u ) UPGRADE="$OPTARG" ;;
         ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
     esac
 done
