@@ -78,7 +78,7 @@ EOF
 
 say "- 1.7.2~1.7.3 Ensure local/remote login warning banner is configured properly" "" 1
 
-    msg="Authorized uses only. All activity performed on this system will be monitored."
+    msg="Authorized uses only. All activities performed on this system will be monitored."
     echo $msg > /etc/issue
     echo $msg > /etc/issue.net
 

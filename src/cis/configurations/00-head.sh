@@ -24,6 +24,11 @@ say "- Change the default shell using Bash instead of Zsh" "" 1
 
     sayDone
 
+say "- Change the locale to en_US.UTF-8" "" 1
+
+    sed -i /etc/locale.gen -e 's/^#\?\s*\(en_US\.UTF-8 UTF-8\)\s*/\1/g' > /dev/null
+    locale-gen > /dev/null
+
 say "- Fixing the rsyslog upgraded breaking changes" "" 1
 
     sed -e 's/^$PrivDropTo\(User\|Group\).*/#\0/g' -i /etc/rsyslog.conf
