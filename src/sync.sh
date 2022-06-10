@@ -3,13 +3,12 @@
 helpFunction()
 {
    echo ""
-   echo "Usage: $0 -s 192.168.1.2 -r disable -e production -f enable"
+   echo "Usage: $0 [-s|--server] 192.168.1.2 [-e|--environment] production [-u|--upgrade] [-r|--syslog]"
    echo -e "\t [*] - means default value"
-   echo -e "\t-s The remote server ip of the target system. [required]"
-   echo -e "\t-r The option indicator that defines whether enables target system to allow to receive syslog by 514 port or not. (*disable|enable)"
-   echo -e "\t-e The environment that tells the script will load variables in the file \"settings.<env>\". (*production|staging)"
-   echo -e "\t-f The option indicator that defines whether enable log forwarding to the central log server or not. (*enable|disable)"
-   echo -e "\t-u The option indicator that defines whether upgrade packages or not (*disable|enable)"
+   echo -e "\t-s | --server: The remote server ip of the target system. [required]"
+   echo -e "\t-e | --environment: The environment that tells the script will load variables in the file \"settings.<env>\". (*production|staging)"
+   echo -e "\t-r | --syslog: The option indicator that defines whether enables target system to allow to receive syslog by 514 port or not. (*disable|enable)"
+   echo -e "\t-u | --upgrade: The option indicator that defines whether upgrade packages or not (*disable|enable)"
    exit 0 # Exit script after printing help
 }
 
@@ -19,17 +18,24 @@ ENVIR="production"
 FORWARD="enable"
 UPGRADE="disable"
 
-# extracted provided argument if found.
-while getopts "s:r:e:f:u:" opt; do
-    case "$opt" in 
-        s ) SRV_IP="$OPTARG" ;;
-        r ) RECV_SYSLOG="$OPTARG" ;;
-        e ) ENVIR="$OPTARG" ;;
-        f ) FORWARD="$OPTARG" ;;
-        u ) UPGRADE="$OPTARG" ;;
-        ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
+PARSED_ARGUMENTS=$(getopt -o s:e:ru --long upgrade,syslog,server:,environment: -- "$@")
+
+while true; do
+    case "$1" in
+        -s|--server ) SRV_IP="$2"; shift 2 ;;
+        -e|--environment ) ENVIR="$2"; shift 2 ;;
+        -u|--upgrade ) UPGRADE="enable"; shift 1;;
+        -r|--syslog ) FORWARD="disable"; RECV_SYSLOG="enable"; shift 1;;
+        --|"" ) shift; break ;;
+        * ) helpFunction;  break ;; # Print helpFunction in case parameter is non-existent
     esac
 done
+
+echo $SRV_IP
+echo $ENVIR
+echo $UPGRADE
+echo $FORWARD
+echo $RECV_SYSLOG
 
 if test -z "$SRV_IP"; then
     printf '%s\n' "Missing target server ip." >&2

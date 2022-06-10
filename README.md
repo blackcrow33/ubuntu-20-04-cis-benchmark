@@ -80,8 +80,9 @@ The environment variable is default as **production** if you omit the value of i
 
 ```sh
 find . -type f -name *.sh -exec chmod u+x {};
-# e.g. ./sync.sh -s 192.168.8.8 -e staging -f enable -u disbale -r disable
-# e.g. ./sync.sh -s 192.168.8.8
+# e.g. ./sync.sh -s 192.168.8.8 -e --upgrade 
+# e.g. ./sync.sh -s 192.168.8.8 --syslog
+# e.g. ./sync.sh -s 192.168.8.8 --syslog --upgrade
 
-./sync.sh -s <MACHINE_IP> -e <ENVIRONMENT:production> -f <FORWARDING_SYSLOG:enable> -r <RECEIVE_SYSLOG:disable> -u <UPGRADE_PACKAGES:disable>
+./sync.sh [-s|--server] <MACHINE_IP> [-e|--environment] <ENVIRONMENT:production> [-r|--syslog] [-u|--upgrade]
 ```
