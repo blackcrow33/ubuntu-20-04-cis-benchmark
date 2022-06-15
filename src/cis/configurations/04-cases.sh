@@ -116,7 +116,14 @@ EOF
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
 say "- 4.2.1.6 Ensure remote rsyslog messages are only accepted on designated log hosts (only log server enabled) " "" 1
-    if [ -n "$RECV_SYSLOG" ]; then
+
+    # Comment the default module enabling methods
+    sed -e 's/^#\?\(module(load="\(imtcp\|imudp\)")\)/#\1/g' -i /etc/rsyslog.conf > /dev/null
+    sed -e 's/^#\?\(input(type="\(imtcp\|imudp\)" port=".*")\)/#\1/g' -i /etc/rsyslog.conf > /dev/null
+    sed -e 's/^\(\$DirCreateMode\) .*/\1 0750/g' -i /etc/rsyslog.conf > /dev/null
+    sed -e 's/^\(\$Umask\) .*/\1 0027/g' -i /etc/rsyslog.conf > /dev/null
+
+    if [ "$RECV_SYSLOG" = "enable" ]; then
         # These settings will enable the resyslog server to receive tcp syslog message by 514 port
         test -z "$(grep '^\s*\$ModLoad imtcp' /etc/rsyslog.conf)" && \
             echo '$ModLoad imtcp' | tee -a /etc/rsyslog.conf > /dev/null
@@ -128,6 +135,8 @@ say "- 4.2.1.6 Ensure remote rsyslog messages are only accepted on designated lo
         test -z "$(grep '^\s*\$UDPServerRun.*' /etc/rsyslog.conf)" && \
             echo '$UDPServerRun 514' | tee -a /etc/rsyslog.conf > /dev/null
     fi
+
+    systemctl restart rsyslog > /dev/null
     
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
     
@@ -152,7 +161,8 @@ say "- 4.2.2.3 Ensure journald is configured to write logfiles to persistent dis
 
 say "- 4.2.3 Ensure permissions on all logfiles are configured (Automated)" "" 1
     
-    find /var/log -type f -exec chmod g-wx,o-rwx "{}" + -o -type d -exec chmod g-w,o-rwx "{}" +
+    find /var/log -type f -exec chmod 640 "{}" +;
+    find /var/log -type d -exec chmod 755 "{}" +;
 
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
@@ -211,8 +221,8 @@ EOF
 
 say "- 4.4 Ensure logrotate assigns appropriate permissions (Automated)" "" 1
 
-    sed -e 's/^\(\s*create\).*$/\1 0640 root utmp/g' -i /etc/logrotate.conf > /dev/null
-    find /etc/logrotate.d -type f -exec sed -e 's/^\(\s*create\)\s*$/\1 0640 root utmp/g' -i {} +;
+    sed -e 's/^\(\s*create\).*$/\1 0640 root root/g' -i /etc/logrotate.conf > /dev/null
+    find /etc/logrotate.d -type f -exec sed -e 's/^\(\s*create\).*$/\1 0640 root root/g' -i {} +;
     sed -e 's/^\(.*\(wtmp\|btmp\|lastlog\)\).*/\1 0640 root utmp -/g' -i /usr/lib/tmpfiles.d/var.conf
 
     if [ -z "$(grep -E "^maxage.*$" /etc/logrotate.conf)" ]; then

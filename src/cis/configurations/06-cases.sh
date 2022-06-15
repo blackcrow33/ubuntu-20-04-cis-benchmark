@@ -35,9 +35,9 @@ say "- 6.1.6 Ensure permissions on /etc/shadow are configured (Automated)" "" 1
 
 say "- 6.1.10 Ensure no world writable files exist" "" 1
     
-    if [ -d /usr/share/logstash/vendor/bundle/jruby ]; then
-        find /usr/share/logstash/vendor/bundle/jruby -type f -exec chmod g-w,o-rwx {} +;
-    fi
+    for file in $(df --local -P | awk '{if (NR!=1) print $6}' | xargs -I '{}' find '{}' -xdev -type f -perm -0002); do
+        chmod o-rwx $file
+    done
     
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
@@ -47,10 +47,11 @@ say "- 6.2.4 Ensure all users' home directories exist (Automated)" "" 1
         /etc/passwd | \
         while read -r user dir; do
             if [ ! -d "$dir" ]; then
-                mkdir $dir
-                chmod g-w,o-wrx $dir
-                chown $user $dir
+                mkdir -p $dir
             fi
+
+            chmod g-w,o-wrx $dir
+            chown $user $dir
         done
 
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi

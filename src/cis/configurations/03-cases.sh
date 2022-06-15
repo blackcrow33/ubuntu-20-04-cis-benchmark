@@ -252,6 +252,11 @@ say "- 3.5.3.2 Ensure iptables packages are installed (Automated)" "" 1
     # Save the rule for persistent usage
     iptables-save > /etc/iptables/rules.v4
 
+    if [ $KEEP_FIREWALL = 'yes' ]; then
+        [ -f /etc/iptables/rules.v4.old ] && mv /etc/iptables/rules.v4{.old,} && \
+            netfilter-persistent reload > /dev/null 2>&1
+    fi
+
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
 say "- 3.5.3.3 Configure IPv6 ip6tables" "" 1
@@ -280,6 +285,11 @@ say "- 3.5.3.3 Configure IPv6 ip6tables" "" 1
     # Open inbound ssh(tcp port 22) connections
     ip6tables -A INPUT -p tcp --dport 22 -m state --state NEW -j ACCEPT; \
     ip6tables-save > /etc/iptables/rules.v6
+
+    if [ $KEEP_FIREWALL = 'yes' ]; then
+        [ -f /etc/iptables/rules.v6.old ] && mv /etc/iptables/rules.v6{.old,} && \
+            netfilter-persistent reload > /dev/null 2>&1
+    fi
 
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 

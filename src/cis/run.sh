@@ -1,8 +1,4 @@
 #!/bin/bash
-ENVIR="$1"
-ENABLE_SYSLOG="$2"
-FORWARD="$3"
-UPGRADE="$4"
 
 export RCol='\e[0m'    # Text Reset
 
@@ -77,8 +73,9 @@ if [ -f "$WORKDIR/envs/settings.$ENVIR" ]; then
 fi
 
 export FORWARD
-export ENABLE_SYSLOG
+export RECV_SYSLOG
 export UPGRADE
+export KEEP_FIREWALL
 export -f say
 export -f sayln
 export -f sayDone

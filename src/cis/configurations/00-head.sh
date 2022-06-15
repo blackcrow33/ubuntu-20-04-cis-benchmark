@@ -26,8 +26,9 @@ say "- Change the default shell using Bash instead of Zsh" "" 1
 
 say "- Change the locale to en_US.UTF-8" "" 1
 
-    sed -i /etc/locale.gen -e 's/^#\?\s*\(en_US\.UTF-8 UTF-8\)\s*/\1/g' > /dev/null
-    locale-gen > /dev/null
+    sed -i /etc/locale.gen -e 's/^#\?\s*\(en_US\.UTF-8 UTF-8\)\s*/\1/g' > /dev/null 2>&1
+    locale-gen > /dev/null 2>&1
+    sayDone
 
 say "- Fixing the rsyslog upgraded breaking changes" "" 1
 
@@ -57,6 +58,7 @@ say "- Remove unnecessary packages." "" 1
         clamav-daemon \
         clamav \
         sendmail \
+        sendmail-bin \
         snapd > /dev/null
     apt-get autoremove -y > /dev/null
     rm -rf /snap > /dev/null
@@ -77,7 +79,7 @@ say "- Remove unnecessary packages." "" 1
     systemctl restart logrotate
     sayDone
 
-say "- Remove user's unnecessary files"
+say "- Remove user's unnecessary files" "" 1
     awk -F: '($1!~/(halt|sync|shutdown)/ && $7!~/^(\/usr)?\/sbin\/nologin(\/)?$/ && $7!~/(\/usr)?\/bin\/false(\/)?$/) { print $1 " " $6 }' /etc/passwd | \
         while read -r user dir; do 
             if [ -d $dir/.fzf ]; then

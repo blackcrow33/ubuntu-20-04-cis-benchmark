@@ -106,12 +106,16 @@ EOF
 say "- Syncing the latest apt package information" "" 1
     
     if [ "$UPGRADE" = "enable" ]; then
-        apt-offline install $WORKDIR/packages/apt-offline-2022-06-10.zip > /dev/null
+        find $WORKDIR/packages/ -type f -name apt-offline*.zip \
+            -exec apt-offline install {} > /dev/null +
         find /var/cache/apt/archives/ -type f -exec chmod 640 {} +;
-
-        mount -o remount,rw,nosuid,nodev,relatime /tmp
+        
+        if [ "$(mount | grep /tmp | wc -l)" -eq 1 ]; then
+            mount -o remount,rw,exec /tmp
+        fi
 
         DEBIAN_FRONTEND=noninteractive apt-get -q upgrade -y > /dev/null 2>&1
+        DEBIAN_FRONTEND=noninteractive apt-get -q dist-upgrade -y > /dev/null 2>&1
     fi
     
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
@@ -133,6 +137,8 @@ say "- 1.1.2 Ensure /tmp is configured" "" 1
     if [ $(cat /etc/fstab | grep -E "^tmpfs.+$" | wc -l) -eq 0 ]; then
         echo $ARG | tee -a /etc/fstab > /dev/null
         mount -a 2> /dev/null
+    else
+        mount -o remount,nosuid,nodev,noexec /tmp
     fi
 
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
@@ -147,6 +153,56 @@ say "- 1.1.9 Ensure noexec option set on /dev/shm partition" "" 1
     fi
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
+
+say "- Checking is there any Elasticsearch services and change jvm tmp folder to /var/lib/elasticsearch/tmp" "" 1
+
+    if [ "$(systemctl is-enabled elasticsearch 2>&1)" == "enabled" ]; then
+        chown -R elasticsearch:elasticsearch /usr/share/elasticsearch
+        find /usr/share/elasticsearch -type f -exec chmod g-w,o-rwx {} +;
+
+        if [ -z "$(grep -E "^# JDK 9\+ GC logging" /etc/elasticsearch/jvm.options)" ]; then
+            echo -e "# JDK 9+ GC logging\n9-:-Xlog:gc*,gc+age=trace,safepoint:file=/var/log/elasticsearch/gc.log:utctime,pid,tags:filecount=32,filesize=64m" | tee -a /etc/elasticsearch/jvm.options > /dev/null
+        fi
+        
+        if [ ! -d /var/lib/elasticsearch/tmp ]; then
+            mkdir -p /var/lib/elasticsearch/tmp
+            chown elasticsearch:elasticsearch /var/lib/elasticsearch/tmp
+        fi
+
+        find /etc/elasticsearch -type f -name jvm.options* -exec sed -e 's/^#\?\(-Djava\.io\.tmpdir=\).*/\1\/var\/lib\/elasticsearch\/tmp/g' -i {} +;
+
+        mkdir -p /etc/systemd/system/elasticsearch.service.d/
+        cat <<EOF | tee /etc/systemd/system/elasticsearch.service.d/00-override.conf > /dev/null
+[Service]
+UMask=0027
+EOF
+        systemctl daemon-reload
+    fi
+
+    if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
+
+say "- Checking is there any Logstash services and change jvm tmp folder to /var/lib/logstash/tmp" "" 1
+    if [ "$(systemctl is-enabled logstash 2>&1)" == "enabled" ]; then
+
+        chown -R logstash:logstash /usr/share/logstash
+        find /usr/share/logstash -type f -exec chmod g-w,o-rwx {} +;
+
+        if [ ! -d /var/lib/logstash/tmp ]; then
+            mkdir -p /var/lib/logstash/tmp
+            chown logstash:logstash /var/lib/logstash/tmp
+        fi
+
+        find /etc/logstash -type f -name jvm.options* -exec sed -e 's/^#\?\(-Djava\.io\.tmpdir=\).*/\1\/var\/lib\/logstash\/tmp/g' -i {} +;
+
+        mkdir -p /etc/systemd/system/logstash.service.d/
+        cat <<EOF | tee /etc/systemd/system/logstash.service.d/00-override.conf > /dev/null
+[Service]
+UMask=0027
+EOF
+        systemctl daemon-reload
+    fi
+
+    if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
 
 say "- Cleaning up the scripts and packages for the CIS configuration." "" 1

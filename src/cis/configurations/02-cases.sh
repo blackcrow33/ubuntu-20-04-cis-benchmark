@@ -24,9 +24,12 @@ say "- 2.1.7 Ensure NFS service is not installed" "" 1
 say "- 2.1.1.1~2.1.1.2 Ensure time synchronization is in use (Automated)" "" 1
     
     apt-get purge -y ntp chrony > /dev/null
-
-    tar -zxf $WORKDIR/packages/systemd-timesyncd-all.tar.gz -C /var/cache/apt/archives/
-    apt-get -q install -y systemd-timesyncd > /dev/null 2>&1
+    
+    if [ "$(systemctl is-enabled systemd-timesyncd)" != "enabled" ]; then
+        tar -zxf $WORKDIR/packages/systemd-timesyncd-all.tar.gz -C /var/cache/apt/archives/
+        find /var/cache/apt/archives -type f -exec chown root:root {} +;
+        apt-get -q install -y systemd-timesyncd > /dev/null 2>&1
+    fi
 
     sed  -e "s/^#\?\(NTP\)=.*/\1=$REMOTE_NTP_SERVER/g" \
         -e "s/^#\?\(FallbackNTP\)=.*/\1=${REMOTE_FALLBACK_NTP_SERVER:-ntp.ubuntu.com}/g" \
