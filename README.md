@@ -83,6 +83,7 @@ find . -type f -name *.sh -exec chmod u+x {};
 # e.g. ./sync.sh -s 192.168.8.8 -e --upgrade 
 # e.g. ./sync.sh -s 192.168.8.8 --syslog
 # e.g. ./sync.sh -s 192.168.8.8 --syslog --upgrade
+# e.g. ./sync.sh -s 192.168.8.8 --syslog --upgrade --keep-firewall
 
-./sync.sh [-s|--server] <MACHINE_IP> [-e|--environment] <ENVIRONMENT:production> [-r|--syslog] [-u|--upgrade]
+./sync.sh [-s|--server] <MACHINE_IP> [-e|--environment] <ENVIRONMENT:production> [-r|--syslog] [-u|--upgrade] [-k|--keep-firewall]
 ```
