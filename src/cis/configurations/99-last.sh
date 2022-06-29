@@ -204,11 +204,17 @@ EOF
 
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
+say "- Enfore the log file permission" "" 1
+    # It seems like the new rotated log files are not acquire correct permissions
+    # On the last step, run the remove permissions to enforce the policy rules.
+    find /var/log -type f -perm /g+wx,o+rwx -exec chmod g-wx,o-rwx {} +;
+    find /var/log -type d -perm /g+w,o+rwx -exec chmod g-w,o-rwx {} +;
+
+    if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
 say "- Cleaning up the scripts and packages for the CIS configuration." "" 1
     rm -rf $WORKDIR > /dev/null
 
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
-
 
 exit 0

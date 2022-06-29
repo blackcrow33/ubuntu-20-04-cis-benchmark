@@ -166,7 +166,9 @@ say "- 3.3.5~3.3.6 Ensure broadcast ICMP requests & bogus ICMP responeses are ig
 
 say "- 3.3.7 Ensure Reverse Path Filtering is enabled (Automated)" "" 1
 
-    sed -e 's/^\(net\.ipv4\.conf\..*\.rp_filter\)=.*$/\1=1/g' -i /etc/sysctl.d/10-network-security.conf > /dev/null
+    sed -e 's/^#\?\(net\.ipv4\.conf\..*\.rp_filter\)=.*$/\1=1/g' -i /etc/sysctl.d/10-network-security.conf > /dev/null
+    sysctl -w net.ipv4.conf.default.rp_filter=1 > /dev/null
+    sysctl -w net.ipv4.conf.all.rp_filter=1 > /dev/null
     sysctl -w net.ipv4.route.flush=1 > /dev/null
     
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi

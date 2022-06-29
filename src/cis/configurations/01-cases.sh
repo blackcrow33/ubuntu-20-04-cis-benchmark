@@ -15,11 +15,9 @@
 
 say "- 1.1.1.x Ensure mounting of cramfs, freevxfs, jffs2, hfs, hfsplus, udf, usb-storage filesystems is disabled - modprobe" "" 1
     MODS=(cramfs freevxfs jffs2 hfs hfsplus udf usb-storage)
-    for mod in ${MODS[*]}; do
+    for mod in ${MODS[@]}; do
         echo "install $mod /bin/true" | tee /etc/modprobe.d/$mod.conf > /dev/null
-        if [ $(lsmod | grep $mod | wc -l) -eq 1 ]; then
-            rmmod $mod 2> /dev/null
-        fi
+        rmmod $mod > /dev/null 2>&1
     done
     
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
@@ -42,6 +40,20 @@ say "- 1.4.2 Ensure bootloader password is set (Automated)" "" 1
         update-grub > /dev/null 2>&1
     fi
 
+    if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
+
+say "- 1.5.2 Ensure address space layout randomization (Automated)"
+
+    if [ -z $(sysctl kernel.randomize_va_space | grep -E "^kernel\.randomize_va_space\s*=\s*2") ]; then
+        if [ -z $(grep -E "^kernel\.randomize_va_space\s*=.*" /etc/sysctl.d/99-sysctl.conf) ]; then
+            echo "kernel.randomize_va_space = 2" | tee -a /etc/sysctl.d/99-sysctl.conf > /dev/null
+        else 
+            sed -e 's/^#\?\(kernel\.randomize_va_space\)\s*=.*/\1 = 2/g' -i /etc/sysctl.d/99-sysctl.conf
+        fi
+
+        sysctl -w kernel.randomize_va_space=2
+    fi
+    
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
 say "- 1.5.4 Ensure core dumps are restricted (Automated)" "" 1
