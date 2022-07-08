@@ -220,12 +220,14 @@ say "- Fixing the owner of fwupdmgr symbolic link in /var/cache/private/fwupdmgr
 say "- Disable apt daily upgrade background service" "" 1
     
     systemctl stop 
+        unattended-upgrades.service \
         apt-daily.service \
         apt-daily.timer \
         apt-daily-upgrade.timer \
         apt-daily-upgrade.service > /dev/null 2>&1
 
     systemctl disable \
+        unattended-upgrades.service \
         apt-daily.service \
         apt-daily.timer \
         apt-daily-upgrade.timer \
