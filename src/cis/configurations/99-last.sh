@@ -212,6 +212,11 @@ say "- Enfore the log file permission" "" 1
 
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
+say "- Fixing the owner of fwupdmgr symbolic link in /var/cache/private/fwupdmgr" "" 1
+    chown -R root:root /var/cache/private/fwupdmgr
+
+    if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
+
 say "- Cleaning up the scripts and packages for the CIS configuration." "" 1
     rm -rf $WORKDIR > /dev/null
 

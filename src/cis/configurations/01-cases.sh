@@ -19,9 +19,8 @@ say "- 1.1.1.x Ensure mounting of cramfs, freevxfs, jffs2, hfs, hfsplus, udf, us
         echo "install $mod /bin/true" | tee /etc/modprobe.d/$mod.conf > /dev/null
         rmmod $mod > /dev/null 2>&1
     done
-    
-    if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
+    sayDone
 
 say "- 1.4.1 Ensure permissions on bootloader config are not overridden (Automated)" "" 1
     
