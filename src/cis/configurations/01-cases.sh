@@ -43,7 +43,7 @@ say "- 1.4.2 Ensure bootloader password is set (Automated)" "" 1
 
 say "- 1.5.2 Ensure address space layout randomization (Automated)"
 
-    if [ -z $(sysctl kernel.randomize_va_space | grep -E "^kernel\.randomize_va_space\s*=\s*2") ]; then
+    if [ -z "$(sysctl kernel.randomize_va_space | grep 2)" ]; then
         if [ -z $(grep -E "^kernel\.randomize_va_space\s*=.*" /etc/sysctl.d/99-sysctl.conf) ]; then
             echo "kernel.randomize_va_space = 2" | tee -a /etc/sysctl.d/99-sysctl.conf > /dev/null
         else 

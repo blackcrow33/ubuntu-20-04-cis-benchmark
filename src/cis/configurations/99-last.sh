@@ -217,6 +217,22 @@ say "- Fixing the owner of fwupdmgr symbolic link in /var/cache/private/fwupdmgr
 
     if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
 
+say "- Disable apt daily upgrade background service" "" 1
+    
+    systemctl stop 
+        apt-daily.service \
+        apt-daily.timer \
+        apt-daily-upgrade.timer \
+        apt-daily-upgrade.service > /dev/null 2>&1
+
+    systemctl disable \
+        apt-daily.service \
+        apt-daily.timer \
+        apt-daily-upgrade.timer \
+        apt-daily-upgrade.service > /dev/null 2>&1
+
+    if [ $? -eq 0 ]; then sayDone; else sayFailed; fi
+
 say "- Cleaning up the scripts and packages for the CIS configuration." "" 1
     rm -rf $WORKDIR > /dev/null
 
